@@ -34,7 +34,6 @@ const AppLayout: React.FC = () => {
        <ThemeProvider>
         <LayoutContent />
         </ThemeProvider>
-      
     </SidebarProvider>
   );
 };

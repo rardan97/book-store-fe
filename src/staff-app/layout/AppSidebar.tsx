@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 // Assume these icons are imported from an icon library
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
@@ -31,9 +30,24 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Ecommerce", path: "", pro: false }],
   },
   {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "calendar",
+    icon: <GridIcon />,
+    name: "Category",
+    path: "category",
+  },
+  {
+    icon: <GridIcon />,
+    name: "Books",
+    path: "books",
+  },
+  {
+    icon: <GridIcon />,
+    name: "User Management",
+    path: "usermanagement",
+  },
+  {
+    icon: <GridIcon />,
+    name: "role",
+    path: "role",
   },
   {
     icon: <UserCircleIcon />,
