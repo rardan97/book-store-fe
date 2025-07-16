@@ -1,105 +1,121 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
+export interface Book {
+  bookId: number;
+  bookTitle: string;
+  author: string;
+  description: string;
+  price: string;
+  coverUrl: string;
+  quantity: number;
+}
 
-
+interface Item {
+  bookId: number;
+  bookTitle: string;
+  price: string; // asumsi harga string
+  quantity: number;
+}
 
 const BuyNowPage: React.FC = () => {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("credit");
-
-
   const location = useLocation();
-    const book = location.state as {
-    id: number;
-    title: string;
-    author: string;
-    price: number;
-    coverUrl: string;
-    };
+  const navigate = useNavigate();
+  const [book, setBook] = useState<Book | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert(`Terima kasih, ${name}! Pembelian berhasil.`);
-    // Simpan transaksi atau redirect jika perlu
+ 
+  
+  const handleProceedToCheckout = (book : Book) => {
+
+    if (!book) return;
+    const newCategory: Item = {
+                        bookId:book.bookId,
+                        bookTitle:book.bookTitle,
+                        price:book.price,
+                        quantity:book.quantity,
+                    };
+
+    navigate("/checkout", { state: { items: [newCategory] } });
   };
 
-    useEffect(() => {
+  // Scroll to top on mount
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Set book from location.state
+  useEffect(() => {
+    const state = location.state as Book | undefined;
+    if (state) {
+      setBook(state);
+    } else {
+      navigate("/", { replace: true }); // Redirect to home if no book data
+    }
+  }, [location.state, navigate]);
+
+  const handleQuantityChange = (amount: number) => {
+    if (!book) return;
+
+    const updatedQuantity = Math.max(book.quantity + amount, 1); // prevent < 1
+    setBook({ ...book, quantity: updatedQuantity });
+  };
+
+ 
+
+  if (!book) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br  py-12 px-6 flex justify-center">
-      <div className="bg-white rounded-xl shadow-lg p-8 max-w-3xl w-full space-y-8">
-        <h2 className="text-3xl font-bold text-indigo-800 text-center">Checkout</h2>
+    // <div className="min-h-screen bg-gradient-to-br py-12 px-6 flex justify-center">
+    //  <div className="max-w-4xl py-10 px-4 flex justify-center">
+    <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br py-12 px-6 flex justify-center">
+      <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl p-6 sm:p-8 space-y-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-indigo-800 text-center">Detail Pembelian</h2>
 
-        {/* Book Preview */}
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+        <div className="flex flex-col md:flex-row gap-6">
           <img
             src={book.coverUrl}
-            alt={book.title}
-            className="w-40 h-60 object-cover rounded-lg shadow-md"
+            alt={book.bookTitle}
+            className="w-full md:w-40 h-auto object-cover rounded-lg shadow-md"
           />
-          <div className="text-center md:text-left">
-            <h3 className="text-2xl font-bold text-gray-800">{book.title}</h3>
-            <p className="text-gray-600 mb-2">by {book.author}</p>
-            {/* <p className="text-xl font-semibold text-indigo-700">${book.price.toFixed(2)}</p> */}
+          <div className="flex-1 text-left space-y-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">{book.bookTitle}</h1>
+            <p className="text-gray-600 text-sm sm:text-base">by {book.author}</p>
+            <p className="text-gray-600 text-sm sm:text-base">{book.description}</p>
+            <p className="text-indigo-700 text-lg font-semibold">
+                    Rp {Number(book.price).toLocaleString()}
+                  </p>
+            {/* <p className="text-indigo-700 text-lg font-semibold">${book.price.toLocaleString()}</p> */}
+
+            <div className="flex items-center gap-2 mt-3">
+              <button
+                className="px-3 py-1 bg-gray-600 text-white rounded"
+                onClick={() => handleQuantityChange(-1)}
+              >
+                −
+              </button>
+              <span className="px-2 font-medium">{book.quantity}</span>
+              <button
+                className="px-3 py-1 bg-gray-600 text-white rounded"
+                onClick={() => handleQuantityChange(1)}
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Checkout Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Full Name</label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              placeholder="Your name"
-            />
-          </div>
+        <div className="flex items-center justify-between text-lg font-semibold border-t pt-4 text-gray-700">
+          <span>Total</span>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Shipping Address</label>
-            <textarea
-              required
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              placeholder="Enter your full address"
-              rows={3}
-            />
-          </div>
+          <span className="text-indigo-700 font-bold"> Rp {(Number(book.price) * book.quantity).toLocaleString()}</span>
+        </div>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Payment Method</label>
-            <select
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            >
-              <option value="credit">Credit Card</option>
-              <option value="bank">Bank Transfer</option>
-              <option value="cod">Cash on Delivery</option>
-            </select>
-          </div>
-
-          <div className="flex items-center justify-between text-gray-700 font-semibold text-lg">
-            <span>Total</span>
-            {/* <span className="text-indigo-700 font-bold">${book.price.toFixed(2)}</span> */}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3 rounded-lg transition shadow-lg"
-          >
-            Confirm Purchase
-          </button>
-        </form>
+        <button
+          className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition"
+          onClick={() => handleProceedToCheckout(book)}
+        >
+          Proceed to Checkout
+        </button>
       </div>
     </div>
   );

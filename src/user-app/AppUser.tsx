@@ -11,6 +11,7 @@ import LogoutButton from "./components/auth/LogoutButton";
 import PrivateRoute from "./utils/PrivateRoute";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartProvider";
+import CheckoutPage from "./pages/CheckoutPage";
 
 
 
@@ -34,6 +35,11 @@ const AppUser = () => {
                     <Route path="/cart" element={
                         <PrivateRoute>
                             <CartPage />
+                        </PrivateRoute>
+                        } />
+                    <Route path="/checkout" element={
+                        <PrivateRoute>
+                            <CheckoutPage />
                         </PrivateRoute>
                         } />
                     <Route path="/buynow" element={

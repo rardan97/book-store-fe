@@ -9,6 +9,15 @@ import { useAuthUser } from "../../context/AuthProviderUser";
 
 
 
+interface BooksPaymentList {
+    bookId: number;
+    bookTitle: string;
+    author: string;
+    description: string;
+    price: string;
+    quantity: number;
+}
+
 
 
 const BookList: React.FC = () => {
@@ -16,10 +25,11 @@ const BookList: React.FC = () => {
     const navigate = useNavigate();
     const hasFetched = useRef(false);
     const [books, setBooks] = useState<BooksPublic[]>([]);
+    
     const getListAllBooks = useCallback(async (): Promise<void> => {
         
         try {
-            const response = await getPublicListBooks();   
+            const response = await getPublicListBooks(); 
             console.log("Success processing data");
             setBooks(response);
         } catch (error) {
@@ -47,14 +57,33 @@ const BookList: React.FC = () => {
         debouncedAddToCart(book); // jika sudah login, lanjutkan
     });
 
+    const handleBuyDetail = ((book : Books) => {    
+        const newBook: BooksPaymentList = {
+            bookId: book.bookId,
+            bookTitle: book.bookTitle,
+            author: book.author,
+            description: book.description,
+            price: book.price,
+            quantity: 1,
+        };
+        
+        navigate("/buyNow", { state: newBook });
+    });
+
+
+
     const debouncedAddToCart = debounce((book: Books) => {
-        addToCart({ 
+        addToCart({
             bookId: book.bookId, 
             bookTitle: book.bookTitle, 
             price: book.price,
             quantity: 1 
         })
     }, 300);
+
+
+
+
 
     return (
         <section className="max-w-7xl mx-auto px-4 py-12 ">
@@ -82,7 +111,7 @@ const BookList: React.FC = () => {
                   <button
                     className="bg-indigo-600 text-white px-4 py-1.5 rounded-md hover:bg-indigo-700 transition flex-1 md:flex-none text-sm"
                     aria-label={`Buy`}
-                    onClick={() => navigate("/buynow", { state: book })}
+                    onClick={() => handleBuyDetail(book)}
                   >
                     Buy Now
                   </button>
