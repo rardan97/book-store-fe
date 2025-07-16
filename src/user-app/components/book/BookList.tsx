@@ -2,74 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { getPublicListBooks } from "../../api/BookPublic";
 import type { BooksPublic } from "../../interfaces/BooksPublic.interface";
+import { useCart } from "../../context/CartProvider";
+import { debounce } from "lodash";
+import type { Books } from "../../../staff-app/interfaces/Book.interface";
+import { useAuthUser } from "../../context/AuthProviderUser";
 
 
-// interface Book {
-//   id: number;
-//   title: string;
-//   author: string;
-//   price: string;
-//   coverUrl: string;
-// }
-
-// const bestSellers: Book[] = [
-//   {
-//     id: 1,
-//     title: "The Midnight Library",
-//     author: "Matt Haig",
-//     price: "$14.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,library",
-//   },
-//   {
-//     id: 2,
-//     title: "Atomic Habits",
-//     author: "James Clear",
-//     price: "$19.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,habits",
-//   },
-//   {
-//     id: 3,
-//     title: "Where the Crawdads Sing",
-//     author: "Delia Owens",
-//     price: "$16.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,nature",
-//   },
-//   {
-//     id: 4,
-//     title: "Becoming",
-//     author: "Michelle Obama",
-//     price: "$22.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,biography",
-//   },
-//   {
-//     id: 5,
-//     title: "Becoming",
-//     author: "Michelle Obama",
-//     price: "$22.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,biography",
-//   },
-//   {
-//     id: 6,
-//     title: "Becoming",
-//     author: "Michelle Obama",
-//     price: "$22.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,biography",
-//   },
-//   {
-//     id: 7,
-//     title: "Becoming",
-//     author: "Michelle Obama",
-//     price: "$22.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,biography",
-//   },
-//   {
-//     id: 8,
-//     title: "Becoming",
-//     author: "Michelle Obama",
-//     price: "$22.99",
-//     coverUrl: "https://source.unsplash.com/200x300/?book,biography",
-//   },
-// ];
 
 
 
@@ -78,8 +16,6 @@ const BookList: React.FC = () => {
     const navigate = useNavigate();
     const hasFetched = useRef(false);
     const [books, setBooks] = useState<BooksPublic[]>([]);
-
-    
     const getListAllBooks = useCallback(async (): Promise<void> => {
         
         try {
@@ -99,6 +35,26 @@ const BookList: React.FC = () => {
             hasFetched.current = true; // Cegah request kedua
         }
     }, [getListAllBooks]);
+
+    const { user } = useAuthUser(); // gunakan hook kamu
+    const { addToCart } = useCart();
+
+    const handleAddToCart = ((book: Books) => {
+        if (!user) {
+            navigate("/signin"); // arahkan ke halaman login
+            return;
+        }
+        debouncedAddToCart(book); // jika sudah login, lanjutkan
+    });
+
+    const debouncedAddToCart = debounce((book: Books) => {
+        addToCart({ 
+            bookId: book.bookId, 
+            bookTitle: book.bookTitle, 
+            price: book.price,
+            quantity: 1 
+        })
+    }, 300);
 
     return (
         <section className="max-w-7xl mx-auto px-4 py-12 ">
@@ -121,13 +77,22 @@ const BookList: React.FC = () => {
                 <p className="text-sm text-gray-600 mb-4">by {book.author}</p>
                 <div className="mt-auto flex items-center justify-between">
                     <span className="text-xl font-bold text-indigo-600">${book.price}</span>
-                    <button
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
-                    aria-label={`Buy ${book.bookTitle}`}
+                </div>
+                <div className="flex space-x-2 justify-center md:justify-start">
+                  <button
+                    className="bg-indigo-600 text-white px-4 py-1.5 rounded-md hover:bg-indigo-700 transition flex-1 md:flex-none text-sm"
+                    aria-label={`Buy`}
                     onClick={() => navigate("/buynow", { state: book })}
-                    >
+                  >
                     Buy Now
-                    </button>
+                  </button>
+                  <button
+                    className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition flex-1 md:flex-none text-sm"
+                    aria-label={`Add to Cart`}
+                    onClick={() => handleAddToCart(book)}
+                  >
+                    Add Cart
+                  </button>
                 </div>
                 </div>
             </div>

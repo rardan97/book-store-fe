@@ -33,7 +33,7 @@ const BuyNowPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br  py-12 px-6 flex justify-center">
       <div className="bg-white rounded-xl shadow-lg p-8 max-w-3xl w-full space-y-8">
-        <h2 className="text-3xl font-bold text-indigo-800 text-center">Buy Now</h2>
+        <h2 className="text-3xl font-bold text-indigo-800 text-center">Checkout</h2>
 
         {/* Book Preview */}
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">

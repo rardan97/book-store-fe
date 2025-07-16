@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useAuthUser } from "../../context/AuthContextUser";
+import { useAuthUser } from "../../context/AuthProviderUser";
 // import { Link } from "react-router-dom";
 
 export default function LogoutButton() {

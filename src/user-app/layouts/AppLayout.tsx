@@ -6,10 +6,11 @@ import AppHeader from "./AppHeader";
 const LayoutContent: React.FC = () => {
 
     return (
-        <div>
+        <div className="flex flex-col min-h-screen">
             <AppHeader />
-            <Outlet />
-            <br />  
+            <main className="flex-grow">
+                <Outlet />
+            </main>
             <AppFooter />
         </div>
     );

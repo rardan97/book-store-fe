@@ -6,16 +6,19 @@ import Home from "./pages/Home";
 import BooksPage from "./pages/BooksPage";
 import AboutPage from "./pages/AboutPage";
 import BuyNowPage from "./pages/BuyNowPage";
-import { AuthProviderUser } from "./context/AuthContextUser";
+import { AuthProviderUser } from "./context/AuthProviderUser";
 import LogoutButton from "./components/auth/LogoutButton";
 import PrivateRoute from "./utils/PrivateRoute";
+import CartPage from "./pages/CartPage";
+import { CartProvider } from "./context/CartProvider";
 
 
 
 const AppUser = () => {
     return (
         <> 
-            <AuthProviderUser>      
+            <AuthProviderUser>   
+                <CartProvider>   
             <Routes>
                 <Route path="/signin" element={<SignIn />} ></Route>
                 <Route path="/signup" element={<SignUp />} ></Route>
@@ -28,6 +31,11 @@ const AppUser = () => {
                     <Route index element={<Home />} />
                     <Route path="/book" element={<BooksPage />} />
                     <Route path="/about" element={<AboutPage />} />
+                    <Route path="/cart" element={
+                        <PrivateRoute>
+                            <CartPage />
+                        </PrivateRoute>
+                        } />
                     <Route path="/buynow" element={
                         <PrivateRoute>
                             <BuyNowPage />
@@ -35,8 +43,8 @@ const AppUser = () => {
                         } />
                     <Route path="/logout" element={<LogoutButton />} />
                 </Route>
-                
             </Routes>
+             </CartProvider>
             </AuthProviderUser>
         </>
     );

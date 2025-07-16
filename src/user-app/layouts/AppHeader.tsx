@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthUser } from "../context/AuthContextUser";
+import { useAuthUser } from "../context/AuthProviderUser";
+import { useCart } from "../context/CartProvider";
 
 const AppHeader: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +19,12 @@ const AppHeader: React.FC = () => {
     const getInitial = (name: string) => {
         return name.charAt(0).toUpperCase();
     };
+
+    const { cart } = useCart();
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    // const totalItems = cart.length;
+
+
 
     return (
         <header className="bg-white shadow-md sticky top-0 z-50">
@@ -53,36 +60,53 @@ const AppHeader: React.FC = () => {
                     <Link to="/about" className="hover:text-indigo-600 transition">About</Link>
 
                     {isAuthenticated ? (
-                        <div className="relative">
-                        <button
-                            onClick={() => setShowDropdown(!showDropdown)}
-                            className="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center hover:bg-indigo-700 focus:outline-none"
-                        >
-                            {user?.avatarUrl ? (
-                            <img src={user.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover" />
-                            ) : (
-                            user?.userName ? getInitial(user.userName) : "?"
-                            )}
-                        </button>
-                        {showDropdown && (
-                            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-md shadow-lg z-50">
-                            <div className="px-4 py-2 text-sm text-gray-500">{user?.userName}</div>
+                       <div className="flex items-center space-x-7">
+                            {/* Cart Icon */}
                             <Link
-                                to="/profile"
-                                onClick={() => setShowDropdown(false)}
-                                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                to="/cart"
+                                className="relative text-gray-700 hover:text-indigo-600 transition text-xl"
+                                title="Keranjang"
                             >
-                                Profile
+                                🛒
+                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                                   {totalItems} {/* Ganti dengan cart.length dari context */}
+                                </span>
                             </Link>
+                       
+                        
+                        <div className="relative">
+                            
+                           
                             <button
-                                onClick={handleLogout}
-                                className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                onClick={() => setShowDropdown(!showDropdown)}
+                                className="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center hover:bg-indigo-700 focus:outline-none"
                             >
-                                Logout
+                                {user?.avatarUrl ? (
+                                <img src={user.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover" />
+                                ) : (
+                                user?.userName ? getInitial(user.userName) : "?"
+                                )}
                             </button>
-                            </div>
-                        )}
+                            {showDropdown && (
+                                <div className="absolute right-0 mt-2 w-44 bg-white border rounded-md shadow-lg z-50">
+                                    <div className="px-4 py-2 text-sm text-gray-500">{user?.userName}</div>
+                                    <Link
+                                        to="/profile"
+                                        onClick={() => setShowDropdown(false)}
+                                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Profile
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
                         </div>
+                         </div>
                     ) : (
                         <>
                         <Link
@@ -123,6 +147,17 @@ const AppHeader: React.FC = () => {
 
                     {isAuthenticated ? (
                     <>
+                        <Link
+                            to="/cart"
+                            onClick={() => setIsMenuOpen(false)}
+                            className="py-2 px-4 rounded-md hover:bg-indigo-100 transition flex items-center gap-2 relative"
+                        >
+                            <span className="text-xl">🛒</span>
+                            <span>Keranjang</span>
+                            <span className="absolute top-1 right-3 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                                3 {/* ganti dengan cart.length */}
+                            </span>
+                        </Link>
                         {/* Avatar & Nama User */}
                         <div className="flex items-center gap-3 px-4 py-3 bg-indigo-50 rounded-md">
                             <div className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold">

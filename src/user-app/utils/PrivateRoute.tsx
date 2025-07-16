@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import type { JSX } from "react";
-import { useAuthUser } from "../context/AuthContextUser";
+import { useAuthUser } from "../context/AuthProviderUser";
 
 
 interface PrivateRouteProps {

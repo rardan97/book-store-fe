@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router";
-import { useAuthUser } from "../../context/AuthContextUser";
+import { useAuthUser } from "../../context/AuthProviderUser";
 import Alert from "../../../staff-app/components/ui/alert/Alert";
 import Button from "../../../staff-app/components/ui/button/Button";
 import { signInAuthUser } from "../../api/Auth";
