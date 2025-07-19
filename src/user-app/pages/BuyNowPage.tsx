@@ -1,79 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useBooks } from "../context/BooksContext";
 
 export interface Book {
-  bookId: number;
-  bookTitle: string;
-  author: string;
-  description: string;
-  price: string;
-  coverUrl: string;
-  quantity: number;
+    bookId: number;
+    bookTitle: string;
+    author: string;
+    description: string;
+    price: string;
+    bookImage: string;
+    quantity: number;
 }
 
 interface Item {
-  bookId: number;
-  bookTitle: string;
-  price: string; // asumsi harga string
-  quantity: number;
+    bookId: number;
+    bookTitle: string;
+    price: string;
+    quantity: number;
 }
 
 const BuyNowPage: React.FC = () => {
+  const { books } = useBooks();
   const location = useLocation();
   const navigate = useNavigate();
-  const [book, setBook] = useState<Book | null>(null);
 
- 
-  
-  const handleProceedToCheckout = (book : Book) => {
+  const [bookId, setBookId] = useState<number | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
 
-    if (!book) return;
-    const newCategory: Item = {
-                        bookId:book.bookId,
-                        bookTitle:book.bookTitle,
-                        price:book.price,
-                        quantity:book.quantity,
-                    };
-
-    navigate("/checkout", { state: { items: [newCategory] } });
-  };
-
-  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Set book from location.state
   useEffect(() => {
-    const state = location.state as Book | undefined;
-    if (state) {
-      setBook(state);
+    const state = location.state as { bookId: number } | undefined;
+    if (state?.bookId) {
+      setBookId(state.bookId);
     } else {
-      navigate("/", { replace: true }); // Redirect to home if no book data
+      navigate("/", { replace: true });
     }
   }, [location.state, navigate]);
 
-  const handleQuantityChange = (amount: number) => {
-    if (!book) return;
+  const book = books.find((b) => b.bookId === bookId);
 
-    const updatedQuantity = Math.max(book.quantity + amount, 1); // prevent < 1
-    setBook({ ...book, quantity: updatedQuantity });
+  const handleQuantityChange = (amount: number) => {
+    setQuantity((prev) => Math.max(prev + amount, 1));
   };
 
- 
+  const handleProceedToCheckout = () => {
+    if (!book) return;
+
+    const newItem: Item = {
+      bookId: book.bookId,
+      bookTitle: book.bookTitle,
+      price: book.price,
+      quantity,
+    };
+
+    navigate("/checkout", { state: { items: [newItem] } });
+  };
 
   if (!book) return null;
 
   return (
-    // <div className="min-h-screen bg-gradient-to-br py-12 px-6 flex justify-center">
-    //  <div className="max-w-4xl py-10 px-4 flex justify-center">
     <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br py-12 px-6 flex justify-center">
       <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl p-6 sm:p-8 space-y-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-indigo-800 text-center">Detail Pembelian</h2>
 
         <div className="flex flex-col md:flex-row gap-6">
           <img
-            src={book.coverUrl}
+            src={book.bookImage}
             alt={book.bookTitle}
             className="w-full md:w-40 h-auto object-cover rounded-lg shadow-md"
           />
@@ -82,9 +77,8 @@ const BuyNowPage: React.FC = () => {
             <p className="text-gray-600 text-sm sm:text-base">by {book.author}</p>
             <p className="text-gray-600 text-sm sm:text-base">{book.description}</p>
             <p className="text-indigo-700 text-lg font-semibold">
-                    Rp {Number(book.price).toLocaleString()}
-                  </p>
-            {/* <p className="text-indigo-700 text-lg font-semibold">${book.price.toLocaleString()}</p> */}
+              Rp {Number(book.price).toLocaleString()}
+            </p>
 
             <div className="flex items-center gap-2 mt-3">
               <button
@@ -93,7 +87,7 @@ const BuyNowPage: React.FC = () => {
               >
                 −
               </button>
-              <span className="px-2 font-medium">{book.quantity}</span>
+              <span className="px-2 font-medium">{quantity}</span>
               <button
                 className="px-3 py-1 bg-gray-600 text-white rounded"
                 onClick={() => handleQuantityChange(1)}
@@ -106,13 +100,14 @@ const BuyNowPage: React.FC = () => {
 
         <div className="flex items-center justify-between text-lg font-semibold border-t pt-4 text-gray-700">
           <span>Total</span>
-
-          <span className="text-indigo-700 font-bold"> Rp {(Number(book.price) * book.quantity).toLocaleString()}</span>
+          <span className="text-indigo-700 font-bold">
+            Rp {(Number(book.price) * quantity).toLocaleString()}
+          </span>
         </div>
 
         <button
           className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition"
-          onClick={() => handleProceedToCheckout(book)}
+          onClick={handleProceedToCheckout}
         >
           Proceed to Checkout
         </button>

@@ -7,6 +7,7 @@ export interface Books {
     description: string;
     price: string;
     stock: number;
+    bookImage: File | string;
     category: Category;
 }
 
@@ -16,6 +17,7 @@ export interface AddBooksDto {
     description: string;
     price: string;
     stock: number;
+    bookImage: File | string;
     categoryId: string;
 }
 
@@ -27,5 +29,6 @@ export interface EditBookDto{
     description: string;
     price: string;
     stock: number;
+    bookImage: File | string;
     categoryId: string;
 }

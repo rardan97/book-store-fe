@@ -10,6 +10,7 @@ interface CartItem {
   bookId: number;
   bookTitle: string;
   price: string;
+  bookImage: string;
   quantity: number;
 }
 
@@ -21,6 +22,8 @@ export async function getCart(token: string, userId : number) : Promise<CartItem
                 Authorization: `Bearer ${token}`,
             }, 
         });
+
+        console.log(response.data);
         return response.data;
     }catch(error){
         console.error("Error during user fetch:", error);
@@ -30,6 +33,7 @@ export async function getCart(token: string, userId : number) : Promise<CartItem
 
 export async function addCart(token: string, userId : number, data: CartItem) : Promise<CartItem>{
     console.log("token : "+token);
+    console.log("bookImage : "+data.bookImage);
     try{
         const response = await api.post<CartItem>(`${REST_API_BASE_URL_USER}/cartTransaction/addCart/${userId}`, data, {
             headers: {

@@ -9,6 +9,7 @@ import { addBooks } from "../../api/Books";
 import Select from "../form/Select";
 import { getListCategories } from "../../api/Category";
 import type { AddBooksDto } from "../../interfaces/Book.interface";
+import FileInput from "../form/input/FileInput";
 
 
 type OptionCategory = {
@@ -22,6 +23,7 @@ interface Errors {
     description: string;
     price: string;
     stock: string;
+    bookImage:string;
     categoryId: string;
 }
 
@@ -33,9 +35,13 @@ export default function BooksAdd({ onSuccess }: { onSuccess: () => void }) {
     const [description, setDescription] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [stock, setStock] = useState<string>("");
+    const [bookImage, setBookImage] = useState<File | string>("");
     const [categoryId, setCategoryId] = useState<string>("");
-    const [errorsAll, setErrorsAll] = useState<string>("");
     const [optionsCategory, setOptionsCategory] = useState<OptionCategory[]>([]);
+
+
+    const [previewUrl, setPreviewUrl] = useState<string>("");
+    const [errorsAll, setErrorsAll] = useState<string>("");
     const hasFetched = useRef(false);
     
     const [errors, setErrors] = useState<Errors>({
@@ -44,8 +50,24 @@ export default function BooksAdd({ onSuccess }: { onSuccess: () => void }) {
         description: '',
         price: '',
         stock: '',
+        bookImage:'',
         categoryId: '',
+        
     });
+
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (file && file.type.startsWith('image/')) {
+            setBookImage(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        } else {
+            setBookImage("");
+            setPreviewUrl("");
+            setErrors({ ...errors, bookImage: 'Please select a valid image file.' });
+        }
+    };
 
 
     const getListAllCategory = useCallback(async (): Promise<void> => {
@@ -114,6 +136,13 @@ export default function BooksAdd({ onSuccess }: { onSuccess: () => void }) {
             valid = false;
         }
 
+        if (bookImage) {
+            errorsCopy.bookImage = '';
+        } else {
+            errorsCopy.bookImage = 'bookImage is required';
+            valid = false;
+        }
+
         if(categoryId.trim()){
             errorsCopy.categoryId = '';
         }else{
@@ -133,12 +162,14 @@ export default function BooksAdd({ onSuccess }: { onSuccess: () => void }) {
         }
         if (validateForm()) {
             try {
+                
                 const newBooks: AddBooksDto = {
                     bookTitle,
                     author,
                     description,
                     price,
                     stock: Number(stock),
+                    bookImage,
                     categoryId
                 };
             
@@ -150,6 +181,7 @@ export default function BooksAdd({ onSuccess }: { onSuccess: () => void }) {
                     setDescription("");
                     setPrice("");
                     setStock("");
+                    setBookImage("");
                     setCategoryId("");
                     setErrorsAll("");
                     closeModal();
@@ -265,6 +297,21 @@ export default function BooksAdd({ onSuccess }: { onSuccess: () => void }) {
                                     />
                                     {errors.categoryId && <p className="text-red-500 text-sm">{errors.categoryId}</p>}
                                 </div>
+                                <div className="col-span-2">
+                                    <Label>Book Image</Label>
+                                     <FileInput onChange={handleImageChange} className="custom-class" />
+                                    {bookImage && (
+                                        <div className='my-2'>
+                                            <img 
+                                                alt='not found'
+                                                width={"150"}
+                                                src={previewUrl}
+                                            />
+                                        </div>
+                                    )}
+                                    {errors.bookImage && <div className='invalid-feedback'>{errors.bookImage}</div>}
+                                </div>
+                                
                             </div>
                         </div>
                         <div className="flex items-center gap-3 px-2 py-4 lg:justify-end">

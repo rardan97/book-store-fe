@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router';
 interface CartItem {
     bookId: number;
     bookTitle: string;
-    price: string; // asumsi harga string, parse ke number saat hitung total
+    price: string;
+    bookImage:string;
     quantity: number;
 }
 
@@ -14,6 +15,7 @@ const [cartItems, setCartItems] = useState<CartItem[]>([]);
 const [total, setTotal] = useState(0);
 
 const { cart, removeFromCart, updateQuantity } = useCart();
+
 const debounceTimeout = useRef<number | null>(null);
 
 const [checkedItems, setCheckedItems] = useState<number[]>([]);
@@ -21,13 +23,15 @@ const [checkedItems, setCheckedItems] = useState<number[]>([]);
 
 const navigate = useNavigate();
 
-const handleProceedToCheckout = () => {
-  const selectedItems = cartItems.filter((item) =>
-    checkedItems.includes(item.bookId)
-  );
 
-  // Kirim ke halaman checkout, misal /checkout
-  navigate("/checkout", { state: { items: selectedItems } });
+
+const handleProceedToCheckout = () => {
+const selectedItems = cartItems.filter((item) =>
+    checkedItems.includes(item.bookId)
+);
+
+// Kirim ke halaman checkout, misal /checkout
+navigate("/checkout", { state: { items: selectedItems } });
 };
 
 
@@ -96,80 +100,80 @@ const handleRemove = (id: number) => {
 
 return (
     <div className="max-w-4xl mx-auto p-4 bg-gradient-to-br py-12 px-6 flex justify-center">
-   {/* <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10"> */}
-  <div className="w-full max-w-4xl bg-white rounded-xl shadow-xl p-6 sm:p-8 space-y-6">
+{/* <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10"> */}
+<div className="w-full max-w-4xl bg-white rounded-xl shadow-xl p-6 sm:p-8 space-y-6">
     <h1 className="text-2xl sm:text-3xl font-bold text-indigo-800 text-center mb-6">Shopping Cart</h1>
 
     {cartItems.length === 0 ? (
-      <p className="text-gray-500 text-center">Your cart is empty.</p>
+    <p className="text-gray-500 text-center">Your cart is empty.</p>
     ) : (
-      <>
+    <>
         <div className="space-y-4">
-          {cartItems.map((item) => (
+        {cartItems.map((item) => (
             <div
-              key={item.bookId}
-              className="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 border rounded-lg p-4 shadow-sm"
+            key={item.bookId}
+            className="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 border rounded-lg p-4 shadow-sm"
             >
-              <div className="flex items-start sm:items-center gap-4 w-full sm:w-2/3">
+            <div className="flex items-start sm:items-center gap-4 w-full sm:w-2/3">
                 <input
-                  type="checkbox"
-                  checked={checkedItems.includes(item.bookId)}
-                  onChange={() => toggleCheck(item.bookId)}
-                  className="mt-1 sm:mt-0"
+                type="checkbox"
+                checked={checkedItems.includes(item.bookId)}
+                onChange={() => toggleCheck(item.bookId)}
+                className="mt-1 sm:mt-0"
                 />
                 <img
-                  src={'https://via.placeholder.com/80x80'}
-                  alt={item.bookTitle}
-                  className="w-20 h-20 object-cover rounded"
+                src={item.bookImage}
+                alt={item.bookTitle}
+                className="w-20 h-20 object-cover rounded"
                 />
                 <div>
-                  <h2 className="font-semibold text-lg">{item.bookTitle}</h2>
-                  <p className="text-sm text-gray-600">
+                <h2 className="font-semibold text-lg">{item.bookTitle}</h2>
+                <p className="text-sm text-gray-600">
                     Rp {Number(item.price).toLocaleString()}
-                  </p>
+                </p>
                 </div>
-              </div>
+            </div>
 
-              <div className="flex items-center justify-end gap-2 mt-4 sm:mt-0 sm:w-1/3">
+            <div className="flex items-center justify-end gap-2 mt-4 sm:mt-0 sm:w-1/3">
                 <button
-                  className="px-2 py-1 text-white bg-gray-600 rounded"
-                  onClick={() => handleQuantityChange(item.bookId, -1)}
+                className="px-2 py-1 text-white bg-gray-600 rounded"
+                onClick={() => handleQuantityChange(item.bookId, -1)}
                 >
-                  −
+                −
                 </button>
                 <span>{item.quantity}</span>
                 <button
-                  className="px-2 py-1 text-white bg-gray-600 rounded"
-                  onClick={() => handleQuantityChange(item.bookId, 1)}
+                className="px-2 py-1 text-white bg-gray-600 rounded"
+                onClick={() => handleQuantityChange(item.bookId, 1)}
                 >
-                  +
+                +
                 </button>
                 <button
-                  className="ml-2 text-red-500 hover:underline"
-                  onClick={() => handleRemove(item.bookId)}
+                className="ml-2 text-red-500 hover:underline"
+                onClick={() => handleRemove(item.bookId)}
                 >
-                  Remove
+                Remove
                 </button>
-              </div>
             </div>
-          ))}
+            </div>
+        ))}
         </div>
 
         <div className="border-t pt-4 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-lg font-bold text-gray-800">
-            Total: Rp {total.toLocaleString()}
-          </p>
-          <button
-            className="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition"
-            onClick={handleProceedToCheckout}
-            disabled={checkedItems.length === 0}
-          >
-            Proceed to Checkout
-          </button>
+            <p className="text-lg font-bold text-gray-800">
+                Total: Rp {total.toLocaleString()}
+            </p>
+            <button
+                className="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition"
+                onClick={handleProceedToCheckout}
+                disabled={checkedItems.length === 0}
+            >
+                Proceed to Checkout
+            </button>
         </div>
-      </>
+    </>
     )}
-  </div>
+</div>
 </div>
 );
 };

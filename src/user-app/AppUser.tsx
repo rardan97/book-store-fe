@@ -12,6 +12,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartProvider";
 import CheckoutPage from "./pages/CheckoutPage";
+import { BooksProvider } from "./context/BooksContext";
 
 
 
@@ -20,6 +21,9 @@ const AppUser = () => {
         <> 
             <AuthProviderUser>   
                 <CartProvider>   
+                    <BooksProvider>
+
+                    
             <Routes>
                 <Route path="/signin" element={<SignIn />} ></Route>
                 <Route path="/signup" element={<SignUp />} ></Route>
@@ -50,7 +54,9 @@ const AppUser = () => {
                     <Route path="/logout" element={<LogoutButton />} />
                 </Route>
             </Routes>
+            </BooksProvider>
              </CartProvider>
+             
             </AuthProviderUser>
         </>
     );

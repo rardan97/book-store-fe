@@ -36,3 +36,19 @@ export async function getPublicBookValueById(id : number) : Promise<BooksPublic>
         throw new Error("Failed to fetch users");
     }
 }
+
+
+
+
+export async function getLoadImagePublicBook(filename : string) : Promise<Blob>{
+    try{
+        console.log("Check load :"+filename);
+        const response = await api.get<Blob>(`${REST_API_BASE_URL_USER_PUBLIC}/books/images/${filename}`, {
+            responseType:'blob',
+        });
+        return response.data;
+    }catch(error){
+        console.error("Error during user fetch:", error);
+        throw new Error("Failed to fetch users");
+    }
+}

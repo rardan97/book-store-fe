@@ -1,55 +1,38 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { getPublicListBooks } from "../../api/BookPublic";
-import type { BooksPublic } from "../../interfaces/BooksPublic.interface";
 import { useCart } from "../../context/CartProvider";
 import { debounce } from "lodash";
-import type { Books } from "../../../staff-app/interfaces/Book.interface";
 import { useAuthUser } from "../../context/AuthProviderUser";
-
-
-
-interface BooksPaymentList {
-    bookId: number;
-    bookTitle: string;
-    author: string;
-    description: string;
-    price: string;
-    quantity: number;
-}
+import { useBooks } from "../../context/BooksContext";
+import type { BookCart } from "../../interfaces/BookCart.interface";
+import { useMemo } from "react";
 
 
 
 const BookList: React.FC = () => {
 
     const navigate = useNavigate();
-    const hasFetched = useRef(false);
-    const [books, setBooks] = useState<BooksPublic[]>([]);
-    
-    const getListAllBooks = useCallback(async (): Promise<void> => {
-        
-        try {
-            const response = await getPublicListBooks(); 
-            console.log("Success processing data");
-            setBooks(response);
-        } catch (error) {
-            console.log("Failed processing data", error);
-            throw error;
-        }
-    }, []);
-
-    useEffect(() => {
-        console.log(hasFetched);
-        if (!hasFetched.current) {
-            getListAllBooks();
-            hasFetched.current = true; // Cegah request kedua
-        }
-    }, [getListAllBooks]);
-
+    const { books } = useBooks();
     const { user } = useAuthUser(); // gunakan hook kamu
     const { addToCart } = useCart();
 
-    const handleAddToCart = ((book: Books) => {
+     const debouncedAddToCart = useMemo(() => 
+     debounce((book: BookCart) => {
+        if(book.bookImageFileName === "blob:http://localhost:5173/4a35c680-8c1a-48b1-a871-9f122af1cf00"){
+            console.log("Data Ada");
+        }
+        console.log("book.bookImageFileName : "+book.bookImageFileName);
+        addToCart({
+            bookId: book.bookId, 
+            bookTitle: book.bookTitle, 
+            price: book.price,
+            bookImage: book.bookImage,
+            bookImageFileName: book.bookImageFileName,
+            quantity: 1 
+        })
+    }, 300), [addToCart]
+    );
+
+    const handleAddToCart = ((book: BookCart) => {
         if (!user) {
             navigate("/signin"); // arahkan ke halaman login
             return;
@@ -57,37 +40,15 @@ const BookList: React.FC = () => {
         debouncedAddToCart(book); // jika sudah login, lanjutkan
     });
 
-    const handleBuyDetail = ((book : Books) => {    
-        const newBook: BooksPaymentList = {
-            bookId: book.bookId,
-            bookTitle: book.bookTitle,
-            author: book.author,
-            description: book.description,
-            price: book.price,
-            quantity: 1,
-        };
-        
-        navigate("/buyNow", { state: newBook });
+    const handleBuyDetail = ((bookId : number) => {    
+        navigate("/buyNow", { state: {bookId} });
     });
-
-
-
-    const debouncedAddToCart = debounce((book: Books) => {
-        addToCart({
-            bookId: book.bookId, 
-            bookTitle: book.bookTitle, 
-            price: book.price,
-            quantity: 1 
-        })
-    }, 300);
-
-
 
 
 
     return (
         <section className="max-w-7xl mx-auto px-4 py-12 ">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Best Sellers</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Book List</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {books.map((book) => (
@@ -96,7 +57,7 @@ const BookList: React.FC = () => {
                 className="bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition transform hover:scale-105 flex flex-col"
             >
                 <img
-                src=""
+                src={book.bookImage}
                 alt={book.bookTitle}
                 className="rounded-t-lg object-cover w-full h-64"
                 loading="lazy"
@@ -111,7 +72,7 @@ const BookList: React.FC = () => {
                   <button
                     className="bg-indigo-600 text-white px-4 py-1.5 rounded-md hover:bg-indigo-700 transition flex-1 md:flex-none text-sm"
                     aria-label={`Buy`}
-                    onClick={() => handleBuyDetail(book)}
+                    onClick={() => handleBuyDetail(book.bookId)}
                   >
                     Buy Now
                   </button>

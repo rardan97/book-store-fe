@@ -5,10 +5,11 @@ import Label from "../form/Label";
 import Button from "../ui/button/Button";
 import { Modal } from "../ui/modal";
 import Alert from "../ui/alert/Alert";
-import { editBooks, getBookValueById } from "../../api/Books";
+import { editBooks, getBookValueById, getLoadImageBook } from "../../api/Books";
 import Select from "../form/Select";
 import { getListCategories } from "../../api/Category";
 import type { EditBookDto } from "../../interfaces/Book.interface";
+import FileInput from "../form/input/FileInput";
 
 type OptionCategory = {
   value: string;
@@ -21,6 +22,16 @@ type BooksEditProps = {
     idBook: number;
 };
 
+interface Errors {
+        bookTitle: string;
+        author: string;
+        description: string;
+        price: string;
+        stock: string;
+        bookImage:string;
+        categoryId: string;
+    }
+
 export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
 
     const { isOpen, openModal, closeModal } = useModal();
@@ -30,19 +41,15 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
     const [description, setDescription] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [stock, setStock] = useState<string>("");
+    const [bookImage, setBookImage] = useState<File | string>("");
     const [categoryId, setCategoryId] = useState<string>("");
-    const [errorsAll, setErrorsAll] = useState<string>("");
     const [optionsCategory, setOptionsCategory] = useState<OptionCategory[]>([]);
+    const [previewUrl, setPreviewUrl] = useState<string>("");
+
+    const [errorsAll, setErrorsAll] = useState<string>("");
     const hasFetched = useRef(false);
     
-    interface Errors {
-        bookTitle: string;
-        author: string;
-        description: string;
-        price: string;
-        stock: string;
-        categoryId: string;
-    }
+    
 
     const [errors, setErrors] = useState<Errors>({
         bookTitle: '',
@@ -50,8 +57,24 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
         description: '',
         price: '',
         stock: '',
+        bookImage:'',
         categoryId: '',
     });
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        
+
+        if (file && file.type.startsWith('image/')) {
+            setBookImage(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        } else {
+            setBookImage("");
+            setPreviewUrl("");
+            setErrors({ ...errors, bookImage: 'Please select a valid image file.' });
+        }
+    };
 
     const getListCategory = useCallback(async (): Promise<void> => {
         const token = localStorage.getItem("staff_accessToken");
@@ -61,6 +84,7 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
         }
         try {
             const response = await getListCategories(token);   
+            
             const mapped = response.map((cat) => ({
                 value: cat.categoryId.toString(),
                 label: cat.categoryName,
@@ -119,6 +143,13 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
             valid = false;
         }
 
+        if(stock.trim()){
+            errorsCopy.bookImage = '';
+        }else{
+            errorsCopy.bookImage = 'bookImage is required';
+            valid = false;
+        }
+
         if(categoryId.trim()){
             errorsCopy.categoryId = '';
         }else{
@@ -138,6 +169,14 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
         try {
             const response = await getBookValueById(token, idBook);
             console.log("Success processing data");
+            if (response.bookImage) {
+                const resImage = await getLoadImageBook(token, response.bookImage);
+                const url = URL.createObjectURL(resImage);
+                setPreviewUrl(url);
+                setBookImage(response.bookImage);
+            } else {
+                setBookImage(""); 
+            }
             setBookId(response.bookId);
             setBookTitle(response.bookTitle);
             setAuthor(response.author);
@@ -151,6 +190,9 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
         }
     }, [idBook]);
     
+
+
+
     useEffect(() => {
             if (isOpen) {
                 getListAllBook();
@@ -168,6 +210,7 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
                 if (bookId === undefined) {
                     throw new Error("categoryId is undefined");
                 }
+
                 const newBooks: EditBookDto = {
                     bookId,
                     bookTitle,
@@ -175,6 +218,7 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
                     description,
                     price,
                     stock: Number(stock),
+                    bookImage,
                     categoryId,
                 };
             
@@ -187,6 +231,7 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
                     setDescription('');
                     setPrice('');
                     setStock('');
+                    setBookImage("");
                     setCategoryId('');
                     setErrorsAll("");
                     onSuccess();
@@ -302,6 +347,23 @@ export default function BooksEdit({onSuccess, idBook} : BooksEditProps) {
                                 onChange={(e) => setStock(e.target.value)}
                             />
                             {errors.stock && <p className="text-red-500 text-sm">{errors.stock}</p>}
+                        </div>
+                        <div className="col-span-2">
+                            <Label>Book Image</Label>
+                                <FileInput
+                                    onChange={handleImageChange} 
+                                    className="custom-class" 
+                                />
+                            {bookImage && (
+                                <div className='my-2'>
+                                    <img 
+                                        alt='not found'
+                                        width={"150"}
+                                        src={previewUrl}
+                                    />
+                                </div>
+                            )}
+                            {errors.bookImage && <div className='invalid-feedback'>{errors.bookImage}</div>}
                         </div>
                         <div className="col-span-2">
                             <Label>Book Category</Label>
