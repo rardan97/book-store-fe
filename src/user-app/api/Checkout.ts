@@ -1,6 +1,7 @@
 import axios from "axios";
 import { REST_API_BASE_URL_USER_PUBLIC } from "../config";
-import type { CheckoutPayload, TransactionRes } from "../interfaces/Checkout.interface";
+import type { CheckoutPayload } from "../interfaces/Checkout.interface";
+import type { TransactionData } from "../interfaces/Transaction.interface";
 // import type { BooksPublic } from "../interfaces/BooksPublic.interface";
 
 export const api = axios.create({
@@ -11,11 +12,11 @@ export const api = axios.create({
 
 
 
-export async function checkoutTransaction(data: CheckoutPayload) : Promise<TransactionRes>{
+export async function checkoutTransaction(data: CheckoutPayload) : Promise<TransactionData>{
     // console.log("token : "+token);
     console.log("dataProductTransaksi : "+data.dataProductTransaksi);
     try{
-        const response = await api.post<TransactionRes>(`${REST_API_BASE_URL_USER_PUBLIC}/orderTransaction/checkoutTransaction`, data, {
+        const response = await api.post<TransactionData>(`${REST_API_BASE_URL_USER_PUBLIC}/orderTransaction/checkoutTransaction`, data, {
             headers: {
                 'Accept': 'application/json',
                 "Content-Type": "application/json",
@@ -24,7 +25,7 @@ export async function checkoutTransaction(data: CheckoutPayload) : Promise<Trans
         });
 
         console.log("Data Res check : "+response.data);
-        return response;
+        return response.data;
     }catch(error){
         console.error("Error during user fetch:", error);
         throw new Error("Failed to fetch users");

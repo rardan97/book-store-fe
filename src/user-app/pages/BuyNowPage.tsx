@@ -84,9 +84,9 @@ const BuyNowPage: React.FC = () => {
 
             try {
                 const result = await checkoutTransaction(payload);
-                setTransactionData(result.data);
+                setTransactionData(result);
                 
-                console.log("data result checkout: ", result.data.token);
+                console.log("data result checkout: ", result.token);
 
                 navigate("/checkout");
             } catch (error) {

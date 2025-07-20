@@ -32,9 +32,6 @@ const navigate = useNavigate();
 
 const handleProceedToCheckout = async () => {
     
-const selectedItems = cartItems.filter((item) =>
-    checkedItems.includes(item.bookId)
-);
 
 
  const payload: CheckoutPayload = {
@@ -63,7 +60,7 @@ const selectedItems = cartItems.filter((item) =>
 
 // Kirim ke halaman checkout, misal /checkout
 const result = await checkoutTransaction(payload);
-                setTransactionData(result.data);
+                setTransactionData(result);
 
 navigate("/checkout");
 
