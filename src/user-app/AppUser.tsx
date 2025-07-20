@@ -13,6 +13,7 @@ import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartProvider";
 import CheckoutPage from "./pages/CheckoutPage";
 import { BooksProvider } from "./context/BooksContext";
+import { TransactionProvider } from "./context/TransactionContext";
 
 
 
@@ -22,6 +23,9 @@ const AppUser = () => {
             <AuthProviderUser>   
                 <CartProvider>   
                     <BooksProvider>
+                        <TransactionProvider>
+
+                       
 
                     
             <Routes>
@@ -54,6 +58,7 @@ const AppUser = () => {
                     <Route path="/logout" element={<LogoutButton />} />
                 </Route>
             </Routes>
+             </TransactionProvider>
             </BooksProvider>
              </CartProvider>
              

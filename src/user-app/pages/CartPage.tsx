@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartProvider';
 import { useNavigate } from 'react-router';
+import { useTransaction } from '../context/TransactionContext';
+import { checkoutTransaction } from '../api/Checkout';
+import type { CheckoutPayload } from '../interfaces/Checkout.interface';
 
 interface CartItem {
     bookId: number;
@@ -20,18 +23,51 @@ const debounceTimeout = useRef<number | null>(null);
 
 const [checkedItems, setCheckedItems] = useState<number[]>([]);
 
+const { setTransactionData } = useTransaction();
+
 
 const navigate = useNavigate();
 
 
 
-const handleProceedToCheckout = () => {
+const handleProceedToCheckout = async () => {
+    
 const selectedItems = cartItems.filter((item) =>
     checkedItems.includes(item.bookId)
 );
 
+
+ const payload: CheckoutPayload = {
+            dataProductTransaksi: {
+                transaksiId: 102,
+                transaksiKode: "ORDER-20250719-002",
+                transaksiTotal: "30000"
+            },
+            dataProductPembelian: [
+                {
+                productId: 211,
+                productNama: "JavaScript for Beginners",
+                productHarga: "10000",
+                productQty: "2",
+                productTotalHarga: "20000"
+                },
+                {
+                productId: 212,
+                productNama: "Python for Beginners",
+                productHarga: "10000",
+                productQty: "1",
+                productTotalHarga: "10000"
+                }
+            ]
+            };
+
 // Kirim ke halaman checkout, misal /checkout
-navigate("/checkout", { state: { items: selectedItems } });
+const result = await checkoutTransaction(payload);
+                setTransactionData(result.data);
+
+navigate("/checkout");
+
+
 };
 
 

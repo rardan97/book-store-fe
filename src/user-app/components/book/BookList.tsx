@@ -12,15 +12,11 @@ const BookList: React.FC = () => {
 
     const navigate = useNavigate();
     const { books } = useBooks();
-    const { user } = useAuthUser(); // gunakan hook kamu
+    const { user } = useAuthUser();
     const { addToCart } = useCart();
 
      const debouncedAddToCart = useMemo(() => 
      debounce((book: BookCart) => {
-        if(book.bookImageFileName === "blob:http://localhost:5173/4a35c680-8c1a-48b1-a871-9f122af1cf00"){
-            console.log("Data Ada");
-        }
-        console.log("book.bookImageFileName : "+book.bookImageFileName);
         addToCart({
             bookId: book.bookId, 
             bookTitle: book.bookTitle, 

@@ -31,8 +31,18 @@ const navItems: NavItem[] = [
   },
   {
     icon: <PaperPlaneIcon />,
-    name: "Order Transaction",
+    name: "Order Management",
     path: "ordermanagement",
+  },
+  {
+    icon: <FileIcon />,
+    name: "Data Books",
+    path: "books",
+  },
+  {
+    icon: <GroupIcon />,
+    name: "Data User",
+    path: "usermanagement",
   },
   {
     icon: <TaskIcon />,
@@ -40,18 +50,8 @@ const navItems: NavItem[] = [
     path: "category",
   },
   {
-    icon: <FileIcon />,
-    name: "Books",
-    path: "books",
-  },
-  {
-    icon: <GroupIcon />,
-    name: "User Management",
-    path: "usermanagement",
-  },
-  {
     icon: <BoxIcon />,
-    name: "role",
+    name: "Role",
     path: "role",
   },
   {
@@ -59,24 +59,6 @@ const navItems: NavItem[] = [
     name: "User Profile",
     path: "profile",
   },
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "form-elements", pro: false }],
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "basic-tables", pro: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "blank", pro: false },
-  //     { name: "404 Error", path: "error-404", pro: false },
-  //   ],
-  // },
 ];
 
 const othersItems: NavItem[] = [
