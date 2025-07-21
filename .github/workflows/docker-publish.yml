@@ -23,6 +23,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ../..
-          file: book-store-fe/Dockerfile
+          file: ../../Dockerfile
           push: true
           tags: rname97/book-store-fe:latest
