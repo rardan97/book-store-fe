@@ -1,27 +1,17 @@
-# Stage 1: Build
-FROM node:20 AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-# Debug: cek isi folder dist setelah build
-RUN ls -la /app/dist
-
-# Stage 2: Serve
+# Gunakan image Nginx ringan
 FROM nginx:alpine
 
-# Salin hasil build ke folder yang akan disajikan oleh Nginx
+# Hapus default html nginx
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=builder /app/dist/assets /usr/share/nginx/html/assets
-COPY --from=builder /app/dist/src/user-app/index-user.html /usr/share/nginx/html/user.html
-COPY --from=builder /app/dist/src/staff-app/index-staff.html /usr/share/nginx/html/staff.html
+# Salin hasil build dari host ke image
+COPY dist/ /usr/share/nginx/html
 
+# Salin konfigurasi custom nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY default.conf /etc/nginx/conf.d/default.conf
-
+# Expose port nginx
 EXPOSE 80
 
+# Jalankan nginx
 CMD ["nginx", "-g", "daemon off;"]

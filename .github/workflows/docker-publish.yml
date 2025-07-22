@@ -22,9 +22,9 @@ jobs:
       run: |
         echo "VITE_REST_API_BASE_URL_STAFF=${{ secrets.VITE_REST_API_BASE_URL_STAFF }}" >> .env.production
         echo "VITE_REST_API_BASE_URL_STAFF_AUTH=${{ secrets.VITE_REST_API_BASE_URL_STAFF_AUTH }}" >> .env.production
-        echo "VITE_REST_API_BASE_URL_USER=${{ secrets.VITE_REST_API_BASE_URL_USER }}" > .env.production
-        echo "VITE_REST_API_BASE_URL_USER_AUTH=${{ secrets.VITE_REST_API_BASE_URL_USER_AUTH }}" > .env.production
-        echo "VITE_REST_API_BASE_URL_USER_PUBLIC=${{ secrets.VITE_REST_API_BASE_URL_USER_PUBLIC }}" > .env.production
+        echo "VITE_REST_API_BASE_URL_USER=${{ secrets.VITE_REST_API_BASE_URL_USER }}" >> .env.production
+        echo "VITE_REST_API_BASE_URL_USER_AUTH=${{ secrets.VITE_REST_API_BASE_URL_USER_AUTH }}" >> .env.production
+        echo "VITE_REST_API_BASE_URL_USER_PUBLIC=${{ secrets.VITE_REST_API_BASE_URL_USER_PUBLIC }}" >> .env.production
         
 
     - name: Install dependencies

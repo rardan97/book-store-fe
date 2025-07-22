@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from "vite-plugin-svgr";
+import { resolve } from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [
     react(),
     svgr({
@@ -15,15 +17,13 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
-    host: '0.0.0.0',
-    port: 5173
-  },
   build: {
+    outDir: 'dist',
     rollupOptions: {
       input: {
-        user: './src/user-app/index-user.html',  // entry untuk user
-        staff: './src/staff-app/index-staff.html'
+        main: resolve(__dirname, 'index.html'),
+        user: resolve(__dirname, 'src/user-app/index-user.html'),
+        staff: resolve(__dirname, 'src/staff-app/index-staff.html'),
       }
     }
   }
