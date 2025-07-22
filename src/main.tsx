@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { BrowserRouter } from 'react-router-dom'
 
 // Inject Midtrans Snap script
 const midtransScript = document.createElement('script')
@@ -11,7 +12,10 @@ document.head.appendChild(midtransScript)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-        <App />
+    <BrowserRouter>
+     <App />
+    </BrowserRouter>
+       
   </StrictMode>,
 )
 
