@@ -7,14 +7,14 @@ RUN npm install
 COPY . .
 RUN npm run build
 
+# Debug: cek isi folder dist setelah build
+RUN ls -la /app/dist
+
 # Stage 2: Serve
 FROM nginx:alpine
 
 # Salin hasil build ke folder yang akan disajikan oleh Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Salin custom nginx config (opsional)
-# COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
