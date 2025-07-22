@@ -24,10 +24,6 @@ const AppUser = () => {
                 <CartProvider>   
                     <BooksProvider>
                         <TransactionProvider>
-
-                       
-
-                    
             <Routes>
                 <Route path="/signin" element={<SignIn />} ></Route>
                 <Route path="/signup" element={<SignUp />} ></Route>
