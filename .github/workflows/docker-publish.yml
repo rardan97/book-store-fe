@@ -3,7 +3,7 @@ name: Build and Push Docker Image FE
 on:
   push:
     branches:
-      - main
+      - main  # atau branch mana pun yang kamu mau
 
 jobs:
   build:
@@ -19,13 +19,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image with detailed logs
-        run: |
-          docker build --progress=plain -t rname97/book-store-fe:latest .
-          echo "Build finished. Checking /app/dist contents inside build stage:"
-          docker build --target builder --progress=plain . | tee build.log
-          
-      - name: Push Docker image
-        run: |
-          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker push rname97/book-store-fe:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: rname97/book-store-fe:latest
