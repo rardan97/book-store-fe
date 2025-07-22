@@ -16,7 +16,8 @@ FROM nginx:alpine
 # Salin hasil build ke folder yang akan disajikan oleh Nginx
 
 COPY --from=builder /app/dist/assets /usr/share/nginx/html/assets
-COPY --from=builder /app/dist/public/*.html /usr/share/nginx/html/
+COPY --from=builder /app/dist/*.html /usr/share/nginx/html/
+# COPY --from=builder /app/dist/public/*.html /usr/share/nginx/html/
 
 COPY default.conf /etc/nginx/conf.d/default.conf
 
