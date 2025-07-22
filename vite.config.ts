@@ -20,11 +20,11 @@ export default defineConfig({
     port: 5173
   },
   build: {
-    // rollupOptions: {
-    //   input: {
-    //     user: './public/user.html',  // entry untuk user
-    //     staff: './public/staff.html'
-    //   }
-    // }
+    rollupOptions: {
+      input: {
+        user: './src/user-app/index-user.html',  // entry untuk user
+        staff: './src/staff-app/index-staff.html'
+      }
+    }
   }
 })
