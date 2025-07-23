@@ -4,10 +4,13 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 
+import { VITE_MIDTRANS_CLIENT_KEY } from './config.ts'
+
+
 // Inject Midtrans Snap script
 const midtransScript = document.createElement('script')
 midtransScript.src = 'https://app.sandbox.midtrans.com/snap/snap.js'
-midtransScript.setAttribute('data-client-key', import.meta.env.VITE_MIDTRANS_CLIENT_KEY || '')
+midtransScript.setAttribute('data-client-key', VITE_MIDTRANS_CLIENT_KEY || '')
 document.head.appendChild(midtransScript)
 
 createRoot(document.getElementById('root')!).render(
