@@ -1,5 +1,5 @@
 import axios from "axios";
-import { REST_API_BASE_URL_STAFF } from "../config";
+import { REST_API_BASE_URL_STAFF } from "../../config";
 import type { AddBooksDto, Books, EditBookDto } from "../interfaces/Book.interface";
 
 export const api = axios.create({

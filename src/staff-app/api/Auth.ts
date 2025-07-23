@@ -1,5 +1,5 @@
 import axios from "axios";
-import { REST_API_BASE_URL_STAFF_AUTH } from "../config";
+import { REST_API_BASE_URL_STAFF_AUTH } from "../../config";
 import type { Role } from "../interfaces/Role.interface";
 
 export const api = axios.create({

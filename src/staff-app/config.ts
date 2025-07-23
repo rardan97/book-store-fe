@@ -1,2 +1,0 @@
-export const REST_API_BASE_URL_STAFF = import.meta.env.VITE_REST_API_BASE_URL_STAFF;
-export const REST_API_BASE_URL_STAFF_AUTH = import.meta.env.VITE_REST_API_BASE_URL_STAFF_AUTH;

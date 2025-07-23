@@ -1,5 +1,5 @@
 import axios from "axios";
-import { REST_API_BASE_URL_USER_AUTH } from "../config";
+import { REST_API_BASE_URL_USER_AUTH } from "../../config";
 
 export const api = axios.create({
     baseURL: REST_API_BASE_URL_USER_AUTH,

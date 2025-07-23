@@ -1,5 +1,5 @@
 import axios from "axios";
-import { REST_API_BASE_URL_USER_PUBLIC } from "../config";
+import { REST_API_BASE_URL_USER_PUBLIC } from "../../config";
 import type { Category } from "../interfaces/CategoryPublic.interface";
 
 

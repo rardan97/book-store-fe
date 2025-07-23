@@ -1,5 +1,5 @@
 import axios from "axios";
-import { REST_API_BASE_URL_STAFF } from "../config";
+import { REST_API_BASE_URL_STAFF } from "../../config";
 import type { Category, CategoryDto } from "../interfaces/Category.interface";
 
 export const api = axios.create({

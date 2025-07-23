@@ -1,5 +1,5 @@
 import axios from "axios";
-import { REST_API_BASE_URL_USER_PUBLIC } from "../config";
+import { REST_API_BASE_URL_USER_PUBLIC } from "../../config";
 import type { CheckoutPayload } from "../interfaces/Checkout.interface";
 import type { TransactionData } from "../interfaces/Transaction.interface";
 // import type { BooksPublic } from "../interfaces/BooksPublic.interface";
